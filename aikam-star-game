@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Catch the Stars, Aikam ⭐</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(#87ceeb, #ffffff);
+      font-family: "Comic Sans MS", cursive;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 10px;
+      font-size: 2.3rem;
+      color: #ff9800;
+    }
+
+    #score, #timer {
+      font-size: 1.5rem;
+      color: #333;
+      margin: 5px;
+    }
+
+    .star {
+      position: absolute;
+      font-size: 50px;
+      cursor: pointer;
+      animation: pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      font-size: 1.2rem;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Catch the Stars, Aikam ⭐</h1>
+  <div id="timer">Time left: 60 ⏱️</div>
+  <div id="score">Stars caught: 0 ⭐</div>
+
+  <div class="footer">Tap the ⭐ stars quickly!</div>
+
+  <audio id="ding">
+    <source src="https://www.soundjay.com/buttons/sounds/button-3.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    let score = 0;
+    let timeLeft = 60;
+    let gameActive = true;
+
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timer");
+    const sound = document.getElementById("ding");
+
+    function createStar() {
+      if (!gameActive) return;
+
+      const star = document.createElement("div");
+      star.className = "star";
+      star.innerHTML = "⭐";
+
+      star.style.left = Math.random() * (window.innerWidth - 60) + "px";
+      star.style.top = Math.random() * (window.innerHeight - 120) + "px";
+
+      star.onclick = () => {
+        if (!gameActive) return;
+        score++;
+        scoreDisplay.innerHTML = "Stars caught: " + score + " ⭐";
+        sound.play();
+        star.remove();
+      };
+
+      document.body.appendChild(star);
+
+      setTimeout(() => {
+        if (star.parentNode) star.remove();
+      }, 2500);
+    }
+
+    const starInterval = setInterval(createStar, 1000);
+
+    const timerInterval = setInterval(() => {
+      timeLeft--;
+      timerDisplay.innerHTML = "Time left: " + timeLeft + " ⏱️";
+
+      if (timeLeft <= 0) {
+        endGame();
+      }
+    }, 1000);
+
+    function endGame() {
+      gameActive = false;
+      clearInterval(starInterval);
+      clearInterval(timerInterval);
+
+      document.body.innerHTML = `
+        <div style="
+          display:flex;
+          flex-direction:column;
+          justify-content:center;
+          align-items:center;
+          height:100vh;
+          background:linear-gradient(#ffecd2,#fcb69f);
+          font-family:'Comic Sans MS', cursive;
+          text-align:center;
+          padding:20px;
+        ">
+          <h1>🎉 Time’s Up, Aikam! 🎉</h1>
+          <p style="font-size:2rem;">
+            You caught <strong>${score}</strong> stars ⭐⭐⭐
+          </p>
+          <p style="font-size:1.5rem;">
+            You are a SUPER STAR 🌟
+          </p>
+          <p style="margin-top:20px;font-size:1.2rem;">
+            ❤️ Love, Papa
+          </p>
+          <button onclick="location.reload()" style="
+            margin-top:25px;
+            padding:15px 30px;
+            font-size:1.2rem;
+            border:none;
+            border-radius:25px;
+            background:#ff9800;
+            color:white;
+            cursor:pointer;
+          ">
+            Play Again 🔁
+          </button>
+        </div>
+      `;
+    }
+  </script>
+
+</body>
+</html>
